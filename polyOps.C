@@ -9,7 +9,7 @@ typedef struct poly {
 }poly;
 
 poly* make_poly(int degree); 
-void printPoly(poly *); //one of these ^ don't work for now :D
+void printPoly(poly *);
 //Operations
 /*
 A more convenient (and useful application) would be to set the return type to poly* instead of void
@@ -38,7 +38,6 @@ int main()
 
     printf("Input for first polynomial\n");
     poly1_p = make_poly(degree1);
-//    printf("coeff %d expo %d ptr %p\n", poly1_p -> c, poly1_p -> e, poly1_p -> next);
     
     printf("Input for second polynomial\n");
     poly2_p = make_poly(degree2);
@@ -85,10 +84,6 @@ poly* make_poly(int d)
             term -> next = NULL;
 
             start = term;
-/*            printf("coeff %d\n", term -> c);
-            printf("expo %d\n", term -> e);
-            printf("ptr %p\n", term -> next);
-            //previous -> next = term;*/
             previous = term;
         }
 
@@ -100,12 +95,6 @@ poly* make_poly(int d)
 
             previous -> next = term;
             previous = term;
-/*            printf("coeff %d\n", term -> c);
-            printf("expo %d\n", term -> e);
-            printf("ptr %p\n", term -> next);
-            printf("coeff %d\n", start -> c);
-            printf("expo %d\n", start -> e);
-            printf("ptr %p\n", start -> next);*/
         }
 
     }
