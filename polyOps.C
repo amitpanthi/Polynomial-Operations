@@ -24,23 +24,29 @@ int main()
     int degree1, degree2;
     //printf("Please enter the first polynomial, starting from highest degree to lowest degree.\n");
     //printf("WARNING: Do not use ^ for the polynomial degree, just write polynomials in AxB format, where A is coefficient and B is degree\n");
-    printf("Please enter the number of terms in first polynomial (Degree + 1)\n");
+    printf("Please enter the degree of polynomial number 1\n");
     scanf("%d", &degree1);    
-    printf("Please enter the number of terms in first polynomial (Degree + 1)\n");
+    printf("Please enter the degree of polynomial number 2\n");
     scanf("%d", &degree2);
 
     poly *poly1_p = NULL;
     poly1_p = (poly*)malloc(sizeof(poly));
+
     poly *poly2_p = NULL;
     poly2_p = (poly*)malloc(sizeof(poly));
 
+
+    printf("Input for first polynomial\n");
     poly1_p = make_poly(degree1);
+//    printf("coeff %d expo %d ptr %p\n", poly1_p -> c, poly1_p -> e, poly1_p -> next);
+    
+    printf("Input for second polynomial\n");
     poly2_p = make_poly(degree2);
 
-    polyAdd(poly1_p, poly2_p);
-    polySub(poly1_p, poly2_p);
-    polyMultiply(poly1_p, poly2_p);
-    //printPoly(poly1_p);
+    //polyAdd(poly1_p, poly2_p);
+    //polySub(poly1_p, poly2_p);
+    //polyMultiply(poly1_p, poly2_p);
+    printPoly(poly2_p);
 
     return 0;
 }
@@ -52,13 +58,15 @@ poly* make_poly(int d)
 
     poly* start = NULL;
 
-    poly* term = NULL;
+    poly* term;
     term = (poly*)malloc(sizeof(poly));
 
-    poly* previous = NULL;
+    poly* previous;
     
-    for (i = 0; i < d; i++)
+    for (i = 0; i <= d; i++)
     {
+        poly* term;
+        term = (poly*)malloc(sizeof(poly));
 
         //Take input. If iterator == final term, it is a constant
         if(i < d)
@@ -77,8 +85,10 @@ poly* make_poly(int d)
             term -> next = NULL;
 
             start = term;
-
-            //previous -> next = term;
+/*            printf("coeff %d\n", term -> c);
+            printf("expo %d\n", term -> e);
+            printf("ptr %p\n", term -> next);
+            //previous -> next = term;*/
             previous = term;
         }
 
@@ -90,7 +100,14 @@ poly* make_poly(int d)
 
             previous -> next = term;
             previous = term;
+/*            printf("coeff %d\n", term -> c);
+            printf("expo %d\n", term -> e);
+            printf("ptr %p\n", term -> next);
+            printf("coeff %d\n", start -> c);
+            printf("expo %d\n", start -> e);
+            printf("ptr %p\n", start -> next);*/
         }
+
     }
 
     return start;
@@ -98,11 +115,13 @@ poly* make_poly(int d)
 
 void printPoly(poly* p)
 {
-    while(p->next != NULL) 
+    while(p -> next != NULL) 
     { 
         printf("%dx^%d", p -> c, p -> e); 
         p = p -> next; 
         if(p -> next != NULL) 
             printf(" + "); 
-        } 
+    }
+
+    printf(" + %d", p -> c) ;
 }
