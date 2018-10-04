@@ -9,15 +9,16 @@ typedef struct poly {
 }poly;
 
 poly* make_poly(int degree); 
-void printPoly(poly *);
+void printPoly(poly *); //one of these ^ don't work for now :D
 //Operations
 /*
 A more convenient (and useful application) would be to set the return type to poly* instead of void
 so you can directly use printPoly(result_poly*). Will decide on what to do about this later
 */
-void polyAdd(poly*, poly*); 
-void polySub(poly*, poly*);
-void polyMultiply(poly*, poly*);
+poly* polyAdd(poly*, poly*); 
+poly* polySub(poly*, poly*);
+poly* polyMultiply(poly*, poly*);
+poly* polyDif(poly*);
 
 int main()
 {
@@ -35,6 +36,8 @@ int main()
     poly *poly2_p = NULL;
     poly2_p = (poly*)malloc(sizeof(poly));
 
+    poly *poly_add = NULL;
+    poly_add = (poly*)malloc(sizeof(poly));
 
     printf("Input for first polynomial\n");
     poly1_p = make_poly(degree1);
@@ -42,9 +45,11 @@ int main()
     printf("Input for second polynomial\n");
     poly2_p = make_poly(degree2);
 
-    //polyAdd(poly1_p, poly2_p);
+    poly_add = polyDif(poly1_p);
     //polySub(poly1_p, poly2_p);
     //polyMultiply(poly1_p, poly2_p);
+    printPoly(poly_add);
+    printf("\n");
     printPoly(poly2_p);
 
     return 0;
@@ -106,11 +111,66 @@ void printPoly(poly* p)
 {
     while(p -> next != NULL) 
     { 
+        if(p -> e == 0)
+        {
+            printf("%d", p -> c);
+            p = p -> next; 
+        }
+        else if(p -> c == 0)
+        {
+            p = p -> next;
+            continue;
+        }
+        else
+        {
         printf("%dx^%d", p -> c, p -> e); 
         p = p -> next; 
-        if(p -> next != NULL) 
-            printf(" + "); 
+        }
+
+        if(p -> next != NULL)
+            printf(" + ");
     }
 
+    if (p -> c == 0)
+    {
+        printf("");
+    } 
+    else 
+    {
     printf(" + %d", p -> c) ;
+    }
+}
+
+poly* polyDif(poly* p)
+{
+//
+    poly* start = NULL;
+    poly* ptr = NULL;
+
+    while(p)
+    {
+        poly* term = NULL;
+        term = (poly*)malloc(sizeof(poly));
+        term -> c = (p -> c) * (p -> e);
+        term -> e = (p -> e) - 1;
+        term -> next = NULL;
+        if(start == NULL)
+        {
+            start = term;
+        } 
+        
+        else 
+        {
+            ptr = start;
+            while(ptr -> next != NULL)
+            {
+                ptr = ptr -> next;
+            }
+            ptr -> next = term;
+        }
+
+        p = p -> next;
+    }
+
+    return start;
 }
