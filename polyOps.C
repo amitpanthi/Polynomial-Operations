@@ -9,12 +9,14 @@ typedef struct poly {
 }poly;
 
 poly* make_poly(int degree); 
-void printPoly(poly *); //one of these ^ don't work for now :D
+void printPoly(poly *);
+
 //Operations
 /*
 A more convenient (and useful application) would be to set the return type to poly* instead of void
 so you can directly use printPoly(result_poly*). Will decide on what to do about this later
 */
+
 poly* polyAdd(poly*, poly*); 
 poly* polySub(poly*, poly*);
 poly* polyMultiply(poly*, poly*);
@@ -22,35 +24,78 @@ poly* polyDif(poly*);
 
 int main()
 {
+    int choice = 0;
     int degree1, degree2;
-    //printf("Please enter the first polynomial, starting from highest degree to lowest degree.\n");
-    //printf("WARNING: Do not use ^ for the polynomial degree, just write polynomials in AxB format, where A is coefficient and B is degree\n");
+    
+    printf("------------------POLYNOMIAL OPERATIONS------------------\n");
+   
+    //Input
+    printf("Please enter input for both polynomials\n");
     printf("Please enter the degree of polynomial number 1\n");
-    scanf("%d", &degree1);    
-    printf("Please enter the degree of polynomial number 2\n");
-    scanf("%d", &degree2);
-
+    scanf("%d", &degree1);
     poly *poly1_p = NULL;
     poly1_p = (poly*)malloc(sizeof(poly));
+    poly1_p = make_poly(degree1); 
 
+    printf("Please enter the degree of polynomial number 2\n");
+    scanf("%d", &degree2);
     poly *poly2_p = NULL;
     poly2_p = (poly*)malloc(sizeof(poly));
-
-    poly *poly_add = NULL;
-    poly_add = (poly*)malloc(sizeof(poly));
-
-    printf("Input for first polynomial\n");
-    poly1_p = make_poly(degree1);
-    
-    printf("Input for second polynomial\n");
     poly2_p = make_poly(degree2);
 
-    poly_add = polyDif(poly1_p);
-    //polySub(poly1_p, poly2_p);
-    //polyMultiply(poly1_p, poly2_p);
-    printPoly(poly_add);
-    printf("\n");
-    printPoly(poly2_p);
+    //Initializing a null poly term to hold the operation value
+    poly *poly_op = NULL;
+    poly_op = (poly*)malloc(sizeof(poly));
+
+
+    //Menu block
+    do
+    {
+        printf("\nPlease select an appropriate choice: ");
+        scanf("%d", &choice);
+
+        switch(choice)
+        {
+            case 1:
+            //Addition block
+            poly_op = polyAdd(poly1_p, poly2_p);
+            printf("(");
+            printPoly(poly1_p);
+            printf(") + (");
+            printPoly(poly2_p);
+            printf(") = ");
+            printPoly(poly_op);
+            break;
+
+            case 2:
+            //Multiplication block
+            poly_op = polyMultiply(poly1_p, poly2_p);
+            printf("(");
+            printPoly(poly1_p);
+            printf(") * (");
+            printPoly(poly2_p);
+            printf(") = ");
+            printPoly(poly_op);
+            break;
+
+            case 3:
+            //Differentiation block
+            poly_op = polyDif(poly1_p);
+            printf("d/dx(");
+            printPoly(poly1_p);
+            printf(") = ");
+            printPoly(poly_op);
+            printf("\n");
+            
+            poly_op = polyDif(poly2_p);
+            printf("d/dx(");
+            printPoly(poly2_p);
+            printf(") = ");
+            printPoly(poly_op);
+
+            break;
+        }
+    } while (choice != 5);
 
     return 0;
 }
@@ -174,3 +219,144 @@ poly* polyDif(poly* p)
 
     return start;
 }
+
+poly* polyMultiply(poly *p1,poly *p2)
+{   
+    poly* start;
+    poly* previous;
+    int limit = (p1->e)+(p2->e);
+    for(int i=0;i<limit+1;i++)
+    {
+        if(i==0){
+            poly* term = NULL;
+            term = (poly*)malloc(sizeof(poly));
+
+            term->e=limit-i;
+            term->c=0;
+            term->next=NULL;
+
+            start=term;
+            previous=term;
+        }
+
+        else{
+
+            poly* term = NULL;
+            term = (poly*)malloc(sizeof(poly));
+
+            term->e=limit-i;
+            term->c=0;
+            term->next=NULL;
+
+            previous->next=term;
+            previous=term;
+            
+        
+        }
+    }
+    poly *temp=p2;
+
+    while(p1!=NULL)
+    {
+        poly* term = start;
+
+        p2=temp;
+        while(p2!=NULL)
+        {
+            poly* term = start;
+            while((term->e)!=(p1->e)+(p2->e))
+            {
+                term=term->next;
+
+            }
+            if(term->e==(p1->e)+(p2->e))
+            {
+                term->c=term->c+(p1->c)*(p2->c);
+            }
+        
+        p2=p2->next;
+        }
+
+        p1=p1->next;
+    }
+
+    return start;
+} 
+
+poly* polyAdd(poly *p1,poly *p2)
+{   
+    
+    poly* greater;
+    poly* smaller;
+    poly* start;
+    poly* previous;
+
+
+    if((p1->e)>(p2->e))  //the greater poly is assigned as greater 
+    {
+        greater=p1;
+        smaller=p2;
+    }
+    else
+    {
+        greater=p2;
+        smaller=p1;
+    }
+    int limit = smaller->e;
+    int i=0;
+    while(smaller!=NULL)
+    {
+        // first we have to set start=the first term
+        if(i==0)
+        {
+            i++;
+            poly* term = NULL;
+            term = (poly*)malloc(sizeof(poly));
+            
+            term->e=greater->e;
+            term->c=greater->c;
+            start=term;
+            term->next=NULL;
+            previous=term;
+        
+        //as we have set the first term of poly = to the 1st term of greater, greater= greater-> next for rest of the polynomials
+            if((greater->e)==(smaller->e))
+            {   
+                term->c=((greater->c)+(smaller->c));
+                smaller=smaller->next;
+            }
+            greater=greater->next;
+           
+        }
+        //we are setting the terms of added polynomial=greater polynomial till the power of grater polynomial becomes equal to the power of lower polynomial
+        
+        while((greater->e)!=(smaller->e))
+        {   
+            
+            poly* term = NULL;
+            term = (poly*)malloc(sizeof(poly));
+            term->e=greater->e;
+            term->c=greater->c;
+            term->next=NULL;
+            previous->next=term;
+            greater=greater->next;
+            previous=term;
+            
+        }
+        
+        //after the while loop greater polynomial's power will be equal to smaller polynomial's power
+        // so we add the coefficient
+        
+        poly* term = NULL;
+        term = (poly*)malloc(sizeof(poly));
+        term->e=greater->e;
+        term->c=((greater->c)+(smaller->c));
+        term->next=NULL;
+        previous->next=term;
+        greater=greater->next;
+        smaller=smaller->next;
+        previous=term;   
+    }
+
+    return start;
+}    
